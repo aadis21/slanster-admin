@@ -10,6 +10,11 @@ import EditCourse from './pages/Courses/EditCourse';
 import JobList from './pages/Jobs/JobList';
 import EditJob from './pages/Jobs/EditJob';
 import MentorList from './pages/Mentor/MentorList';
+import AssessmentsList from './pages/Assessments/AssessmentsList';
+import CreateAssessment from './pages/Assessments/CreateAssessment';
+import EditAssessment from './pages/Assessments/EditAssessment';
+import AssignedList from './pages/Assessments/AssignedList';
+import AssessmentReport from './pages/Assessments/AssessmentReport';
 
 function App() {
   return (
@@ -29,6 +34,11 @@ function App() {
           <Route path="/list-courses" element={<CoursesList />} />
           <Route path="/add-course" element={<CreateCourse />} />
           <Route path="/edit-course/:id" element={<EditCourse />} />
+          <Route path="/list-assessment" element={<AssessmentsList />} />
+          <Route path="/create-assessments" element={<CreateAssessment />} />
+          <Route path="/assessments/edit/:assessmentId" element={<EditAssessment />} />
+          <Route path="/assessments/assigned/:assessmentId" element={<AssignedList />} />
+          <Route path="/assessments/user-report/:assessmentId/:userId" element={<AssessmentReport />} />
         </Route>
       </Routes>
     </BrowserRouter>

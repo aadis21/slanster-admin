@@ -18,7 +18,7 @@ const AssessmentReport = () => {
                 const token = localStorage.getItem("token"); // or any auth storage
 
                 const response = await axios.get(
-                    `http://localhost:8080/api/v1/assessments/admin/result/${assessmentId}/${userId}`,
+                    `https://api.slanster.com/api/v1/assessments/admin/result/${assessmentId}/${userId}`,
                     {
                         headers: {
                             Authorization: `Bearer ${token}`,
@@ -50,10 +50,8 @@ const AssessmentReport = () => {
             <div className="mb-6">
                 <p><strong>Name:</strong> {report.name}</p>
                 <p><strong>Email:</strong> {report.email}</p>
-                <p><strong>Status:</strong> <span className="capitalize">{report.status}</span></p>
                 <p><strong>Score:</strong> {report.score}</p>
                 <p><strong>Remarks:</strong> {report.remarks || "-"}</p>
-                <p><strong>Last Attempt:</strong> {report.lastAttempt ? new Date(report.lastAttempt).toLocaleString() : "-"}</p>
                 <p><strong>Assessment Submission Time:</strong> {report.assessmentSubmissionTime} mins</p>
                 <p><strong>Proctoring Violations:</strong> {Object.entries(report.proctoringViolations).map(([key, value]) => `${key}: ${value}`).join(", ")}</p>
             </div>

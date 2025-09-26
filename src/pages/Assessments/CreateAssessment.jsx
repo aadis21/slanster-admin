@@ -9,6 +9,9 @@ const CreateAssessmentForm = () => {
         shuffleQuestions: false,
         negativeMarking: false,
         passingPercentage: "",
+        isVisible: true,
+        startDate: "", // added
+        endDate: "",   // added
         isProtected: false,
         ProctoringFor: {
             mic: { inUse: false, maxViolations: 0 },
@@ -148,6 +151,28 @@ const CreateAssessmentForm = () => {
                     className="border p-2 w-full rounded"
                 />
 
+                {/* Date Fields */}
+                <label>
+                    Start Date:
+                    <input
+                        type="datetime-local"
+                        name="startDate"
+                        value={formData.startDate}
+                        onChange={handleChange}
+                        className="border p-2 w-full rounded mt-1"
+                    />
+                </label>
+                <label>
+                    End Date:
+                    <input
+                        type="datetime-local"
+                        name="endDate"
+                        value={formData.endDate}
+                        onChange={handleChange}
+                        className="border p-2 w-full rounded mt-1"
+                    />
+                </label>
+
                 {/* Checkboxes */}
                 <label className="flex items-center space-x-2">
                     <input
@@ -166,6 +191,15 @@ const CreateAssessmentForm = () => {
                         onChange={handleChange}
                     />
                     <span>Negative Marking</span>
+                </label>
+                <label className="flex items-center space-x-2">
+                    <input
+                        type="checkbox"
+                        name="isVisible"
+                        checked={formData.isVisible}
+                        onChange={handleChange}
+                    />
+                    <span>Open for users</span>
                 </label>
                 <label className="flex items-center space-x-2">
                     <input

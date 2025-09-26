@@ -120,7 +120,7 @@ export default function AssessmentsList() {
                                     className="p-2 rounded-full bg-green-100 hover:bg-green-200"
                                     title="Assign"
                                 >
-                                    Assign
+                                    Results
                                 </button>
 
                             </div>

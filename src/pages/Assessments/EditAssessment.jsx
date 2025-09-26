@@ -4,6 +4,8 @@ import { useParams } from "react-router-dom";
 
 const EditAssessment = () => {
     const [assessment, setAssessment] = useState(null);
+    const [uploadingModuleIndex, setUploadingModuleIndex] = useState(null);
+    const [excelFile, setExcelFile] = useState(null);
     const { assessmentId } = useParams();
 
     useEffect(() => {
@@ -19,7 +21,16 @@ const EditAssessment = () => {
                     Authorization: `Bearer ${token}`,
                 },
             })
-            .then((res) => setAssessment(res.data.data))
+            .then((res) => {
+                const data = res.data.data;
+
+                // Convert ISO dates to "YYYY-MM-DDTHH:MM" format for datetime-local input
+                const formatDate = (iso) => iso ? iso.substring(0, 16) : "";
+                data.startDate = formatDate(data.startDate);
+                data.endDate = formatDate(data.endDate);
+
+                setAssessment(data);
+            })
             .catch((err) => console.error(err));
     }, [assessmentId]);
 
@@ -80,6 +91,42 @@ const EditAssessment = () => {
         }
     };
 
+    const handleExcelUpload = async (index) => {
+        if (!excelFile) {
+            alert("Please select an Excel file first!");
+            return;
+        }
+
+        const module = assessment.Assessmentmodules[index].module;
+        if (!module._id) {
+            alert("This module is not saved yet. Save the assessment first.");
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append("assessmentid", assessment._id); // match backend name
+        formData.append("moduleId", module._id);         // match backend name
+        formData.append("questions", excelFile);
+
+        try {
+            const token = localStorage.getItem("token");
+            if (!token) return alert("No token found. Please log in.");
+
+            const res = await axios.post(
+                "https://api.slanster.com/api/v1/assessment/module/add-questions",
+                formData,
+                { headers: { Authorization: `Bearer ${token}`, "Content-Type": "multipart/form-data" } }
+            );
+            alert("Questions uploaded successfully!");
+            setExcelFile(null);
+            setUploadingModuleIndex(null);
+        } catch (err) {
+            console.error(err.response?.data || err);
+            alert("Failed to upload questions.");
+        }
+    };
+
+
     if (!assessment) return <div>Loading...</div>;
 
     return (
@@ -127,6 +174,29 @@ const EditAssessment = () => {
                 />
             </div>
 
+
+            {/* Date Fields */}
+            <label>
+                Start Date:
+                <input
+                    type="datetime-local"
+                    name="startDate"
+                    value={assessment.startDate}
+                    onChange={handleChange}
+                    className="border p-2 w-full rounded mt-1"
+                />
+            </label>
+            <label>
+                End Date:
+                <input
+                    type="datetime-local"
+                    name="endDate"
+                    value={assessment.endDate}
+                    onChange={handleChange}
+                    className="border p-2 w-full rounded mt-1"
+                />
+            </label>
+
             <div>
                 <label>Shuffle Questions:</label>
                 <input
@@ -143,6 +213,16 @@ const EditAssessment = () => {
                     type="checkbox"
                     name="negativeMarking"
                     checked={assessment.negativeMarking}
+                    onChange={handleChange}
+                />
+            </div>
+
+            <div>
+                <label>Open for all:</label>
+                <input
+                    type="checkbox"
+                    name="isVisible"
+                    checked={assessment.isVisible}
                     onChange={handleChange}
                 />
             </div>
@@ -200,6 +280,25 @@ const EditAssessment = () => {
                             }
                             className="border p-1 w-full mb-1"
                         />
+
+                        {/* Add Question Upload */}
+                        <input
+                            type="file"
+                            accept=".xlsx,.xls"
+                            onChange={(e) => {
+                                setExcelFile(e.target.files[0]);
+                                setUploadingModuleIndex(index);
+                            }}
+                            className="border p-1 w-full mb-1"
+                        />
+                        <button
+                            type="button"
+                            onClick={() => handleExcelUpload(index)}
+                            className="bg-purple-500 text-white px-2 py-1 mb-1"
+                        >
+                            Upload Questions
+                        </button>
+
                         <button
                             type="button"
                             onClick={() => removeModule(index)}

@@ -68,101 +68,162 @@ export default function AssessmentsList() {
 
     // Handle edit
     const handleEdit = (id) => {
-        // Redirect to edit page (you can adjust route as per your setup)
         window.location.href = `/assessments/edit/${id}`;
     };
 
-    if (loading) return <p className="text-center text-lg">Loading assessments...</p>;
+    if (loading) {
+        return (
+            <div className="max-w-7xl mx-auto p-6">
+                <div className="relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+                    <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-blue-600 via-indigo-500 to-fuchsia-500" />
+                    <div className="mt-2 space-y-4 animate-pulse">
+                        <div className="h-6 w-56 rounded bg-slate-200" />
+                        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                            {[...Array(4)].map((_, i) => (
+                                <div key={i} className="rounded-xl border border-slate-200 p-5">
+                                    <div className="h-5 w-40 rounded bg-slate-200 mb-2" />
+                                    <div className="h-4 w-full rounded bg-slate-200" />
+                                    <div className="mt-4 h-3 w-3/4 rounded bg-slate-200" />
+                                    <div className="mt-2 h-3 w-2/3 rounded bg-slate-200" />
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
     return (
-        <div className="p-6">
-            <div className="flex justify-between items-center mb-6">
-                <h1 className="text-2xl font-bold mb-6">All Assessments</h1>
-                <button
-                    onClick={() => (window.location.href = "/create-assessments")}
-                    className="mb-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-                >
-                    Create New Assessment
-                </button>
+        <div className="max-w-7xl mx-auto p-6">
+            {/* Header Card */}
+            <div className="relative overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_8px_30px_rgba(0,0,0,0.06)]">
+                <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-blue-600 via-indigo-500 to-fuchsia-500" />
+                <div className="flex flex-col items-start gap-4 p-6 sm:flex-row sm:items-center sm:justify-between">
+                    <div>
+                        <h1 className="text-2xl font-semibold tracking-tight text-slate-800">All Assessments</h1>
+                        <p className="mt-1 text-sm text-slate-500">
+                            Review, edit, and manage assessments from the list below.
+                        </p>
+                    </div>
+                    <button
+                        onClick={() => (window.location.href = "/create-assessments")}
+                        className="inline-flex items-center justify-center rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-200"
+                    >
+                        Create New Assessment
+                    </button>
+                </div>
             </div>
 
+            {/* Empty State */}
             {assessments.length === 0 ? (
-                <p>No assessments found</p>
+                <div className="mt-8 rounded-2xl border border-slate-200 bg-white p-10 text-center shadow-sm">
+                    <div className="mx-auto mb-3 h-10 w-10 rounded-full bg-blue-50 ring-1 ring-blue-200 flex items-center justify-center">
+                        <span className="text-blue-600 text-xl">ℹ️</span>
+                    </div>
+                    <p className="text-slate-700 font-medium">No assessments found</p>
+                    <p className="text-slate-500 text-sm mt-1">Click “Create New Assessment” to get started.</p>
+                </div>
             ) : (
-                <div className="grid gap-6 md:grid-cols-2">
+                <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
                     {assessments.map((a) => (
                         <div
                             key={a._id}
-                            className="border rounded-xl shadow-md p-5 hover:shadow-lg transition relative"
+                            className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
                         >
-                            {/* Title */}
-                            <h2 className="text-xl font-semibold">{a.assessmentName}</h2>
-                            <p className="text-gray-600">{a.assessmentDesc}</p>
-
                             {/* Actions */}
-                            <div className="absolute top-4 right-4 flex gap-2">
+                            <div className="absolute right-3 top-3 z-10 flex gap-2">
                                 <button
                                     onClick={() => handleEdit(a._id)}
-                                    className="p-2 rounded-full bg-blue-100 hover:bg-blue-200"
+                                    className="p-2 rounded-full bg-blue-50 text-blue-700 ring-1 ring-blue-200 hover:bg-blue-100"
                                     title="Edit"
                                 >
-                                    <FaEdit className="text-blue-600" />
+                                    <FaEdit />
                                 </button>
                                 <button
                                     onClick={() => handleDelete(a._id)}
-                                    className="p-2 rounded-full bg-red-100 hover:bg-red-200"
+                                    className="p-2 rounded-full bg-red-50 text-red-700 ring-1 ring-red-200 hover:bg-red-100"
                                     title="Delete"
                                 >
-                                    <FaTrash className="text-red-600" />
+                                    <FaTrash />
                                 </button>
                                 <button
                                     onClick={() => (window.location.href = `/assessments/assigned/${a._id}`)}
-                                    className="p-2 rounded-full bg-green-100 hover:bg-green-200"
-                                    title="Assign"
+                                    className="p-2 rounded-full bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200 hover:bg-emerald-100"
+                                    title="Results"
                                 >
                                     Results
                                 </button>
-
                             </div>
 
-                            {/* Assessment Info */}
-                            <div className="mt-3">
-                                <p><strong>Max Marks:</strong> {a.maxMarks}</p>
-                                <p><strong>Passing %:</strong> {a.passingPercentage}</p>
-                                <p><strong>Time Limit:</strong> {a.timelimit} mins</p>
-                            </div>
+                            {/* Body */}
+                            <div className="p-5">
+                                {/* Title & subtitle */}
+                                <h2 className="pr-24 text-lg font-semibold text-slate-800">
+                                    {a.assessmentName}
+                                </h2>
+                                <p className="mt-1 line-clamp-2 text-sm text-slate-600">
+                                    {a.assessmentDesc}
+                                </p>
 
-                            {/* Proctoring Section */}
-                            <div className="mt-4">
-                                <h3 className="font-semibold mb-2">Proctoring Rules</h3>
-                                <div className="flex flex-wrap gap-3">
-                                    {Object.entries(a.ProctoringFor).map(([key, value]) =>
-                                        value.inUse ? (
-                                            <div
-                                                key={value._id}
-                                                className="flex items-center gap-2 px-3 py-1 bg-gray-100 rounded-full"
-                                            >
-                                                {iconMap[key]}
-                                                <span className="text-sm">
-                                                    {key} (max: {value.maxViolations})
-                                                </span>
-                                            </div>
-                                        ) : null
-                                    )}
+                                {/* Quick stats */}
+                                <div className="mt-4 flex flex-wrap items-center gap-2">
+                                    <span className="rounded-full bg-amber-50 px-2.5 py-1 text-xs font-medium text-amber-700 ring-1 ring-amber-200">
+                                        Max: {a.maxMarks}
+                                    </span>
+                                    <span className="rounded-full bg-indigo-50 px-2.5 py-1 text-xs font-medium text-indigo-700 ring-1 ring-indigo-200">
+                                        Pass: {a.passingPercentage}%
+                                    </span>
+                                    <span className="rounded-full bg-sky-50 px-2.5 py-1 text-xs font-medium text-sky-700 ring-1 ring-sky-200">
+                                        Time: {a.timelimit} min
+                                    </span>
                                 </div>
-                            </div>
 
-                            {/* Modules */}
-                            <div className="mt-4">
-                                <h3 className="font-semibold">Modules</h3>
-                                <ul className="list-disc list-inside">
-                                    {a.Assessmentmodules.map((m) => (
-                                        <li key={m._id}>
-                                            {m.module.moduleName} ({m.module.noOfQuestions} questions,{" "}
-                                            {m.module.timelimit} mins)
-                                        </li>
-                                    ))}
-                                </ul>
+                                {/* Proctoring */}
+                                <div className="mt-4">
+                                    <h3 className="text-sm font-semibold text-slate-700 mb-2">Proctoring Rules</h3>
+                                    <div className="flex flex-wrap gap-2">
+                                        {a?.ProctoringFor &&
+                                            Object.entries(a.ProctoringFor).map(([key, value]) =>
+                                                value?.inUse ? (
+                                                    <div
+                                                        key={value._id}
+                                                        className="flex items-center gap-1.5 rounded-full bg-slate-50 px-3 py-1.5 text-xs font-medium text-slate-700 ring-1 ring-slate-200"
+                                                    >
+                                                        {iconMap[key]}
+                                                        <span className="capitalize">
+                                                            {key} • max {value.maxViolations}
+                                                        </span>
+                                                    </div>
+                                                ) : null
+                                            )}
+                                    </div>
+                                </div>
+
+                                {/* Modules */}
+                                <div className="mt-4">
+                                    <h3 className="text-sm font-semibold text-slate-700">Modules</h3>
+                                    <ul className="mt-1 space-y-2">
+                                        {a.Assessmentmodules.map((m) => (
+                                            <li
+                                                key={m._id}
+                                                className="flex flex-wrap items-center justify-between rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm"
+                                            >
+                                                <span className="font-medium text-slate-800">
+                                                    {m.module.moduleName}
+                                                </span>
+                                                <span className="flex gap-2">
+                                                    <span className="rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700 ring-1 ring-blue-200">
+                                                        {m.module.noOfQuestions} Qs
+                                                    </span>
+                                                    <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-700 ring-1 ring-emerald-200">
+                                                        {m.module.timelimit} min
+                                                    </span>
+                                                </span>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                     ))}

@@ -70,6 +70,18 @@ const EditAssessment = () => {
         }));
     };
 
+const downloadtemp = () => {
+  const fileUrl = "/AssessmentQuestions.xlsx"; 
+
+  const link = document.createElement("a");
+  link.href = fileUrl;
+  link.download = "AssessmentQuestions.xlsx";
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+};
+
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
@@ -130,232 +142,241 @@ const EditAssessment = () => {
     if (!assessment) return <div>Loading...</div>;
 
     return (
-        <form onSubmit={handleSubmit} className="space-y-4 p-4">
-            <div>
-                <label>Assessment Name:</label>
-                <input
-                    type="text"
-                    name="assessmentName"
-                    value={assessment.assessmentName}
-                    onChange={handleChange}
-                    className="border p-2 w-full"
-                />
+      <form onSubmit={handleSubmit} className="space-y-4 p-4">
+        <div>
+          <label>Assessment Name:</label>
+          <input
+            type="text"
+            name="assessmentName"
+            value={assessment.assessmentName}
+            onChange={handleChange}
+            className="border p-2 w-full"
+          />
+        </div>
+
+        <div>
+          <label>Description:</label>
+          <textarea
+            name="assessmentDesc"
+            value={assessment.assessmentDesc}
+            onChange={handleChange}
+            className="border p-2 w-full"
+          />
+        </div>
+
+        <div>
+          <label>Max Marks:</label>
+          <input
+            type="number"
+            name="maxMarks"
+            value={assessment.maxMarks}
+            onChange={handleChange}
+            className="border p-2 w-full"
+          />
+        </div>
+
+        <div>
+          <label>Time Limit (minutes):</label>
+          <input
+            type="number"
+            name="timelimit"
+            value={assessment.timelimit}
+            onChange={handleChange}
+            className="border p-2 w-full"
+          />
+        </div>
+
+        {/* Date Fields */}
+        <label>
+          Start Date:
+          <input
+            type="datetime-local"
+            name="startDate"
+            value={assessment.startDate}
+            onChange={handleChange}
+            className="border p-2 w-full rounded mt-1"
+          />
+        </label>
+        <label>
+          End Date:
+          <input
+            type="datetime-local"
+            name="endDate"
+            value={assessment.endDate}
+            onChange={handleChange}
+            className="border p-2 w-full rounded mt-1"
+          />
+        </label>
+
+        <div>
+          <label>Shuffle Questions:</label>
+          <input
+            type="checkbox"
+            name="shuffleQuestions"
+            checked={assessment.shuffleQuestions}
+            onChange={handleChange}
+          />
+        </div>
+
+        <div>
+          <label>Negative Marking:</label>
+          <input
+            type="checkbox"
+            name="negativeMarking"
+            checked={assessment.negativeMarking}
+            onChange={handleChange}
+          />
+        </div>
+
+        <div>
+          <label>Open for all:</label>
+          <input
+            type="checkbox"
+            name="isVisible"
+            checked={assessment.isVisible}
+            onChange={handleChange}
+          />
+        </div>
+
+        <div>
+          <label>Passing Percentage:</label>
+          <input
+            type="number"
+            name="passingPercentage"
+            value={assessment.passingPercentage}
+            onChange={handleChange}
+            className="border p-2 w-full"
+          />
+        </div>
+
+        <div>
+          <label>Is Protected:</label>
+          <input
+            type="checkbox"
+            name="isProtected"
+            checked={assessment.isProtected}
+            onChange={handleChange}
+          />
+        </div>
+
+        {/* Modules */}
+        <div>
+          <h3 className="font-bold">Modules:</h3>
+          {assessment?.Assessmentmodules?.map((m, index) => (
+            <div key={index} className="border p-2 mb-2">
+              <input
+                type="text"
+                placeholder="Module Name"
+                value={m.module.moduleName}
+                onChange={(e) =>
+                  handleModuleChange(index, "moduleName", e.target.value)
+                }
+                className="border p-1 w-full mb-1"
+              />
+              <input
+                type="number"
+                placeholder="Time Limit"
+                value={m.module.timelimit || ""}
+                onChange={(e) =>
+                  handleModuleChange(index, "timelimit", e.target.value)
+                }
+                className="border p-1 w-full mb-1"
+              />
+              <input
+                type="number"
+                placeholder="Number of Questions"
+                value={m.module.noOfQuestions || ""}
+                onChange={(e) =>
+                  handleModuleChange(index, "noOfQuestions", e.target.value)
+                }
+                className="border p-1 w-full mb-1"
+              />
+
+              {/* Add Question Upload */}
+              <input
+                type="file"
+                accept=".xlsx,.xls"
+                onChange={(e) => {
+                  setExcelFile(e.target.files[0]);
+                  setUploadingModuleIndex(index);
+                }}
+                className="border p-1 w-full mb-1"
+              />
+              <button
+                type="button"
+                onClick={() => handleExcelUpload(index)}
+                className="bg-purple-500 text-white px-2 py-1 mb-1"
+              >
+                Upload Questions
+              </button>
+
+              <button
+                type="button"
+                onClick={() => removeModule(index)}
+                className="bg-red-500 text-white px-2 py-1 mt-1"
+              >
+                Remove Module
+              </button>
+              <button
+                type="button"
+                onClick={() => downloadtemp()}
+                className="bg-green-500 text-white px-2 py-1 mt-1"
+              >
+                Downlaod Tempalte
+              </button>
             </div>
+          ))}
+          <button
+            type="button"
+            onClick={addModule}
+            className="bg-green-500 text-white px-2 py-1"
+          >
+            Add Module
+          </button>
+        </div>
 
-            <div>
-                <label>Description:</label>
-                <textarea
-                    name="assessmentDesc"
-                    value={assessment.assessmentDesc}
-                    onChange={handleChange}
-                    className="border p-2 w-full"
-                />
-            </div>
-
-            <div>
-                <label>Max Marks:</label>
+        {/* Proctoring (shown only if isProtected) */}
+        {assessment.isProtected && (
+          <div>
+            <h3 className="font-bold">Proctoring Options:</h3>
+            {Object.keys(assessment.ProctoringFor).map((key) => (
+              <div key={key} className="flex items-center space-x-2">
                 <input
-                    type="number"
-                    name="maxMarks"
-                    value={assessment.maxMarks}
-                    onChange={handleChange}
-                    className="border p-2 w-full"
+                  type="checkbox"
+                  checked={assessment.ProctoringFor[key].inUse}
+                  onChange={(e) => {
+                    const updated = { ...assessment.ProctoringFor };
+                    updated[key].inUse = e.target.checked;
+                    setAssessment((prev) => ({
+                      ...prev,
+                      ProctoringFor: updated,
+                    }));
+                  }}
                 />
-            </div>
-
-            <div>
-                <label>Time Limit (minutes):</label>
+                <span>{key}</span>
                 <input
-                    type="number"
-                    name="timelimit"
-                    value={assessment.timelimit}
-                    onChange={handleChange}
-                    className="border p-2 w-full"
+                  type="number"
+                  min={0}
+                  value={assessment.ProctoringFor[key].maxViolations}
+                  onChange={(e) => {
+                    const updated = { ...assessment.ProctoringFor };
+                    updated[key].maxViolations = parseInt(e.target.value, 10);
+                    setAssessment((prev) => ({
+                      ...prev,
+                      ProctoringFor: updated,
+                    }));
+                  }}
+                  className="border p-1 w-20"
                 />
-            </div>
+              </div>
+            ))}
+          </div>
+        )}
 
-
-            {/* Date Fields */}
-            <label>
-                Start Date:
-                <input
-                    type="datetime-local"
-                    name="startDate"
-                    value={assessment.startDate}
-                    onChange={handleChange}
-                    className="border p-2 w-full rounded mt-1"
-                />
-            </label>
-            <label>
-                End Date:
-                <input
-                    type="datetime-local"
-                    name="endDate"
-                    value={assessment.endDate}
-                    onChange={handleChange}
-                    className="border p-2 w-full rounded mt-1"
-                />
-            </label>
-
-            <div>
-                <label>Shuffle Questions:</label>
-                <input
-                    type="checkbox"
-                    name="shuffleQuestions"
-                    checked={assessment.shuffleQuestions}
-                    onChange={handleChange}
-                />
-            </div>
-
-            <div>
-                <label>Negative Marking:</label>
-                <input
-                    type="checkbox"
-                    name="negativeMarking"
-                    checked={assessment.negativeMarking}
-                    onChange={handleChange}
-                />
-            </div>
-
-            <div>
-                <label>Open for all:</label>
-                <input
-                    type="checkbox"
-                    name="isVisible"
-                    checked={assessment.isVisible}
-                    onChange={handleChange}
-                />
-            </div>
-
-            <div>
-                <label>Passing Percentage:</label>
-                <input
-                    type="number"
-                    name="passingPercentage"
-                    value={assessment.passingPercentage}
-                    onChange={handleChange}
-                    className="border p-2 w-full"
-                />
-            </div>
-
-            <div>
-                <label>Is Protected:</label>
-                <input
-                    type="checkbox"
-                    name="isProtected"
-                    checked={assessment.isProtected}
-                    onChange={handleChange}
-                />
-            </div>
-
-            {/* Modules */}
-            <div>
-                <h3 className="font-bold">Modules:</h3>
-                {assessment?.Assessmentmodules?.map((m, index) => (
-                    <div key={index} className="border p-2 mb-2">
-                        <input
-                            type="text"
-                            placeholder="Module Name"
-                            value={m.module.moduleName}
-                            onChange={(e) =>
-                                handleModuleChange(index, "moduleName", e.target.value)
-                            }
-                            className="border p-1 w-full mb-1"
-                        />
-                        <input
-                            type="number"
-                            placeholder="Time Limit"
-                            value={m.module.timelimit || ""}
-                            onChange={(e) =>
-                                handleModuleChange(index, "timelimit", e.target.value)
-                            }
-                            className="border p-1 w-full mb-1"
-                        />
-                        <input
-                            type="number"
-                            placeholder="Number of Questions"
-                            value={m.module.noOfQuestions || ""}
-                            onChange={(e) =>
-                                handleModuleChange(index, "noOfQuestions", e.target.value)
-                            }
-                            className="border p-1 w-full mb-1"
-                        />
-
-                        {/* Add Question Upload */}
-                        <input
-                            type="file"
-                            accept=".xlsx,.xls"
-                            onChange={(e) => {
-                                setExcelFile(e.target.files[0]);
-                                setUploadingModuleIndex(index);
-                            }}
-                            className="border p-1 w-full mb-1"
-                        />
-                        <button
-                            type="button"
-                            onClick={() => handleExcelUpload(index)}
-                            className="bg-purple-500 text-white px-2 py-1 mb-1"
-                        >
-                            Upload Questions
-                        </button>
-
-                        <button
-                            type="button"
-                            onClick={() => removeModule(index)}
-                            className="bg-red-500 text-white px-2 py-1 mt-1"
-                        >
-                            Remove Module
-                        </button>
-                    </div>
-                ))}
-                <button
-                    type="button"
-                    onClick={addModule}
-                    className="bg-green-500 text-white px-2 py-1"
-                >
-                    Add Module
-                </button>
-            </div>
-
-            {/* Proctoring (shown only if isProtected) */}
-            {assessment.isProtected && (
-                <div>
-                    <h3 className="font-bold">Proctoring Options:</h3>
-                    {Object.keys(assessment.ProctoringFor).map((key) => (
-                        <div key={key} className="flex items-center space-x-2">
-                            <input
-                                type="checkbox"
-                                checked={assessment.ProctoringFor[key].inUse}
-                                onChange={(e) => {
-                                    const updated = { ...assessment.ProctoringFor };
-                                    updated[key].inUse = e.target.checked;
-                                    setAssessment((prev) => ({ ...prev, ProctoringFor: updated }));
-                                }}
-                            />
-                            <span>{key}</span>
-                            <input
-                                type="number"
-                                min={0}
-                                value={assessment.ProctoringFor[key].maxViolations}
-                                onChange={(e) => {
-                                    const updated = { ...assessment.ProctoringFor };
-                                    updated[key].maxViolations = parseInt(e.target.value, 10);
-                                    setAssessment((prev) => ({ ...prev, ProctoringFor: updated }));
-                                }}
-                                className="border p-1 w-20"
-                            />
-                        </div>
-                    ))}
-                </div>
-            )}
-
-            <button
-                type="submit"
-                className="bg-blue-500 text-white px-4 py-2 mt-4"
-            >
-                Update Assessment
-            </button>
-        </form>
+        <button type="submit" className="bg-blue-500 text-white px-4 py-2 mt-4">
+          Update Assessment
+        </button>
+      </form>
     );
 };
 
